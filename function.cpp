@@ -25,13 +25,11 @@ int encrypFile(char *filename){
 
 	if(fSource == NULL){
 		printf("无法打开原文件: %s\n",files.original_file);
-		scanf("%s");
 		return 0;
 	}
 
 	if(fDest == NULL){
 		printf("无法生成加密文件：%s\n",files.encrypt_file);
-		scanf("%s");
 		return 0;
 	}
 	
@@ -79,13 +77,11 @@ char decryptFile(char *filename){
 	fDest = fopen(files.original_file, "wb");
 	if(fSource == NULL){
 		printf("无法打开加密文件: %s\n",files.encrypt_file);
-		scanf("%s");
 		return 0;
 	}
 
 	if(fDest == NULL){
 		printf("无法生成解密文件：%s\n",files.original_file);
-		scanf("%s");
 		return 0;
 	}
 
@@ -121,7 +117,7 @@ MYFILE pretreatment(char *filename,int mode){
 
 	if(mode == 1){//加密
 		_splitpath( filename, drive, dir, fname, ext);
-		_makepath( newfilename, drive, dir, fname, ".jathon");
+		_makepath( newfilename, drive, dir, fname, ".je");
 
 		int ext_len = strlen(ext);
 		char ext_encryp_str[EXT_STORAGE_LEN];
@@ -154,7 +150,6 @@ MYFILE pretreatment(char *filename,int mode){
 		fSource = fopen(filename, "rb");//读取加密文件
 		if(fSource == NULL){
 			printf("无法打开加密文件: %s\n",filename);
-			scanf("%s");
 			return result;
 		}
 
@@ -175,7 +170,7 @@ MYFILE pretreatment(char *filename,int mode){
 		fclose(fSource);
 
 		_splitpath( filename, drive, dir, fname, ext);
-		strcat(fname,"-jathon");
+		strcat(fname,"-je");
 		_makepath( newfilename, drive, dir, fname, original_ext);
 
 		strcpy(result.original_file,newfilename);
