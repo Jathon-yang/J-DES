@@ -8,7 +8,9 @@ int encrypFile(char *filename){
 	MYFILE files;
 	char *source,*key,ckey,fBuffer[1],trueFalse[2];
 	int index = 0;
+	uint64 filesize = fileSize(filename);
 	FILE *fSource,*fDest;
+	float milestone = 0.01;//完成进度
 
 	files = pretreatment(filename,1);
 
@@ -23,6 +25,7 @@ int encrypFile(char *filename){
 	fDest = fopen(files.encrypt_file, "wb");
 	fSource = fopen(files.original_file, "rb");
 
+
 	if(fSource == NULL){
 		printf("无法打开原文件: %s\n",files.original_file);
 		return 0;
@@ -36,17 +39,24 @@ int encrypFile(char *filename){
 	fwrite(files.ext_encryp_str, 1, EXT_STORAGE_LEN, fDest); // 写入文件
 	
 	key = DATA_KEY;
+
 	while(!feof(fSource)){ 
         fread(fBuffer, 1, 1, fSource);    // 读取1字节  
-          
         if(!feof(fSource)){
             ckey = key[index%7];     // 循环获取key  
             *fBuffer = *fBuffer ^ ckey;   // xor encrypt  
-            fwrite(fBuffer, 1, 1, fDest); // 写入文件  
-            index ++;  
+            fwrite(fBuffer, 1, 1, fDest); // 写入文件
+
+			index ++; 
+
+			if(((1.0*index)/filesize) >= milestone){
+				showProgress(milestone*100);
+				milestone += 0.01;
+			}
+             
         }
     }
-  
+	printf("\n");
     fclose(fSource);
 	fclose(fDest);
 	printf("加密文件的路径为：%s\n",files.encrypt_file);
@@ -60,7 +70,9 @@ char decryptFile(char *filename){
 	char *source,ckey,fBuffer[1],trueFalse[2],*key = DATA_KEY;//文件加密KEY;
 	int index = 0,ext_index = 0;
 	FILE *fSource,*fDest;
+	uint64 filesize = fileSize(filename);
 	MYFILE files;
+	float milestone = 0.01;
 
 	files = pretreatment(filename,2);
 
@@ -93,8 +105,14 @@ char decryptFile(char *filename){
 			*fBuffer = *fBuffer ^ ckey;   // xor encrypt  
 			fwrite(fBuffer, 1, 1, fDest); // 写入文件  
 			index ++; 
+
+			if(((1.0*index)/filesize) >= milestone){//显示进度
+				showProgress(milestone*100);
+				milestone += 0.01;
+			}
 		}
     }
+	printf("\n");
 	fclose(fSource);
 	fclose(fDest);
 
@@ -193,3 +211,24 @@ void printStartMsg(){
 	printf("****************************************************\n");
 }
 
+//获取文件大小 
+uint64 fileSize(char filename[255]){
+	FILE *fSource;
+	uint64 filesize;
+	fSource = fopen(filename, "r");
+
+	fseek(fSource,0,2);
+	
+	filesize = ftell(fSource);
+	fclose(fSource);
+	return filesize;
+}
+
+//打印进度
+void showProgress(int progress){
+	char *str = "####################################################################################################";
+	char *str2 = "----------------------------------------------------------------------------------------------------";
+	printf("[%d%%]%s%s\r",progress,str+(100-progress),str2+progress);
+	fflush(stdout);
+}
+				

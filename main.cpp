@@ -3,7 +3,6 @@
 #include <string.h>
 #include "function.h"
 
-
 int main(){
 	int option;
 	int in_pass,password = 123456;
@@ -23,15 +22,18 @@ int main(){
 		
 	}
 	
+	char filename[255];
 	while(1){
 		printf("请输入你要操作选项的数字并回车继续：\n");
 		printf("1.加密文件\n");
 		printf("2.解密文件\n");
+		printf("3.退出程序\n");
 		scanf("%d",&option);
-		//option = 2;
+		//option = 1;
 
-		char filename[255];
-	
+		//退出程序
+		if(option == 3) return 0;
+		
 		printf("请输入需要加/解密的文件路径:");
 		scanf("%s",&filename);
 
