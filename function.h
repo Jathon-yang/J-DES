@@ -7,14 +7,17 @@ MYFILE{
 	char original_file[255];
 	char ext_encryp_str[EXT_STORAGE_LEN];
 	char *ext;
+	bool error;
 };
 
 typedef unsigned long long int  uint64;
 
-int encrypFile(char *filename);//加密文件
+int encrypFile(char filename[255]);//加密文件
 char decryptFile(char *filename);//解密文件
 void printStartMsg();//打印启动信息
 uint64 fileSize(char filename[255]);//获取文件大小 
 void showProgress(int progress);//打印进度
+void formatInput(char *input);//格式化输入值
 MYFILE pretreatment(char *filename,int mode);
+
 
