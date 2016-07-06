@@ -1,27 +1,15 @@
 #include <stdlib.h>  
 #include <stdio.h>  
 #include <string.h>
+#include <windows.h>
 #include "function.h"
 
 int main(){
-	int option;
-	int in_pass,password = 123456;
 
-	int error = 3;
-	printStartMsg();
+	bool init = appInit();//程序初始化
+	if(init == false) return 0;//初始化失败则中止程序
 
-	/*while(1){
-		printf("请输入6位密码：");
-		scanf("%d",&in_pass);
-
-		if(password == in_pass) break;
-			
-		printf("对不起，你输入的密码不正确！还有%d次机会\n",--error);
-		
-		if(error < 1) return 0;
-		
-	}*/
-	
+	int option;//选项
 	char filename[255];
 	while(1){
 		
@@ -31,11 +19,7 @@ int main(){
 		printf("请输入你要操作选项的数字并回车继续：");
 		scanf("%d",&option);
 		fflush(stdin);
-		//option = 1;
-
-
 	
-
 		switch(option){
 			case 1:
 				printf("请输入需要加密的文件路径(输入 p 返回):");
@@ -75,6 +59,9 @@ int main(){
 					break;
 				}
 				printf("文件解密完成！\n");
+				break;
+			case 3 :
+				return 0;
 				break;
 			default :
 				printf("输入选项非法！\n");

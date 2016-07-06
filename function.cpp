@@ -1,11 +1,93 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <windows.h>
 #include <time.h>
 #include "function.h"
 
 char *progress_str = ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>";
 char *progress_str2 = "==================================================";
+
+//程序初始化
+bool appInit(){
+	printStartMsg();
+
+	HKEY hKEY;
+	char *regname = "Software\\J-DES";
+
+	LONG lRet=RegOpenKeyExA(HKEY_LOCAL_MACHINE,regname,0,KEY_READ,&hKEY);
+	if(lRet != ERROR_SUCCESS){//没有相关注册表选项(进行初始化)
+		RegCloseKey(hKEY);//关闭注册表
+
+		char pw1[17],pw2[17];
+		printf("第一次进入，需要设置一下初始密码。\n");
+		printf("请输入你的密码：");
+		fgets(pw1,sizeof(pw1),stdin);
+		formatInput(pw1);
+		if(strlen(pw1) > 16){
+			printf("密码长度不能超过16个字符！\n");
+			return false;
+		}
+		printf("请再次输入你的密码：");
+		fgets(pw2,sizeof(pw2),stdin);
+		formatInput(pw2);
+		if(strcmp(pw1, pw2) != 0){
+			printf("两次密码不一致！\n");
+			return false;
+		}
+
+		return editPassword(pw1);
+	}else{//非初始化提示输入密码
+		char in_pass[17];
+		int error = 3;
+
+		char password[32] = {0}; 
+		DWORD dwSize;
+
+		dwSize=sizeof(password);
+		lRet=RegQueryValueExA(hKEY,"password",NULL,NULL,(LPBYTE)password,&dwSize);
+		RegCloseKey(hKEY);//关闭注册表
+
+		while(1){
+			printf("请输入密码：");
+			fgets(in_pass,sizeof(in_pass),stdin);
+			formatInput(in_pass);
+			if(strlen(in_pass) > 16){
+				printf("密码长度不能超过16个字符！\n");
+				return false;
+			}
+
+			if(strcmp(in_pass, password) == 0) return true;
+			
+			printf("对不起，你输入的密码不正确！还有%d次机会\n",--error);
+		
+			if(error < 1) return false;
+		}
+	}
+	return true;
+}
+
+//设置密码
+bool editPassword(char pw[16]){
+	HKEY hKEY;
+	char *regname = "Software\\J-DES";
+	char *lpszValueName = "password";
+	DWORD dwDisposition = REG_OPENED_EXISTING_KEY;
+
+	LONG lRet = RegCreateKeyExA(HKEY_LOCAL_MACHINE, regname, NULL, NULL, REG_OPTION_NON_VOLATILE,KEY_ALL_ACCESS, NULL, &hKEY, &dwDisposition); 
+	if(lRet != ERROR_SUCCESS){
+		printf("无权限打开注册表，请检查是否以管理员运行！\n");
+		return false;
+	}
+
+	lRet = ::RegSetValueExA(hKEY, lpszValueName, NULL, REG_SZ, (BYTE*)pw, strlen(pw)+1);
+	if(ERROR_SUCCESS != lRet){  
+        printf("无权限打开注册表，请检查是否以管理员运行！");
+		return false; 
+    }
+	RegCloseKey(hKEY);
+	return true;
+}
 
 //加密文件
 int encrypFile(char filename[255]){

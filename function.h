@@ -12,12 +12,15 @@ MYFILE{
 
 typedef unsigned long long int  uint64;
 
+bool appInit();//程序初始化
+bool editPassword(char pw[16]);//设置密码
 int encrypFile(char filename[255]);//加密文件
 char decryptFile(char *filename);//解密文件
 void printStartMsg();//打印启动信息
 uint64 fileSize(char filename[255]);//获取文件大小 
 void showProgress(int progress);//打印进度
 void formatInput(char *input);//格式化输入值
+
 MYFILE pretreatment(char *filename,int mode);
 
 
