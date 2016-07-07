@@ -2,10 +2,13 @@
 #include <stdio.h>  
 #include <string.h>
 #include <windows.h>
+#include "md5.h"
 #include "function.h"
+
 
 int main(){
 
+	
 	bool init = appInit();//程序初始化
 	if(init == false) return 0;//初始化失败则中止程序
 

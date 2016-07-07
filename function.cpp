@@ -3,6 +3,7 @@
 #include <string.h>
 #include <windows.h>
 #include <time.h>
+#include "md5.h"
 #include "function.h"
 
 char *progress_str = ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>";
@@ -41,7 +42,9 @@ bool appInit(){
 		char in_pass[17];
 		int error = 3;
 
-		char password[32] = {0}; 
+		char password[33] = {0};
+		char decrypt_str[33] = {0}; 
+	
 		DWORD dwSize;
 
 		dwSize=sizeof(password);
@@ -57,7 +60,8 @@ bool appInit(){
 				return false;
 			}
 
-			if(strcmp(in_pass, password) == 0) return true;
+			md5(in_pass,decrypt_str);
+			if(strcmp(decrypt_str, password) == 0) return true;
 			
 			printf("对不起，你输入的密码不正确！还有%d次机会\n",--error);
 		
@@ -80,7 +84,10 @@ bool editPassword(char pw[16]){
 		return false;
 	}
 
-	lRet = ::RegSetValueExA(hKEY, lpszValueName, NULL, REG_SZ, (BYTE*)pw, strlen(pw)+1);
+	char decrypt_str[33] = {0}; 
+	md5(pw,decrypt_str);
+
+	lRet = ::RegSetValueExA(hKEY, lpszValueName, NULL, REG_SZ, (BYTE*)decrypt_str, strlen(decrypt_str)+1);
 	if(ERROR_SUCCESS != lRet){  
         printf("无权限打开注册表，请检查是否以管理员运行！");
 		return false; 
