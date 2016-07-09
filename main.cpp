@@ -10,7 +10,10 @@ int main(){
 
 	
 	bool init = appInit();//程序初始化
-	if(init == false) return 0;//初始化失败则中止程序
+	if(init == false){
+		scanf_s("%s");
+		return 0;//初始化失败则中止程序
+	}
 
 	int option;//选项
 	char filename[255];
@@ -18,9 +21,10 @@ int main(){
 		
 		printf("1.加密文件\n");
 		printf("2.解密文件\n");
-		printf("3.退出程序\n");
+		printf("3.密码重置\n");
+		printf("4.退出程序\n");
 		printf("请输入你要操作选项的数字并回车继续：");
-		scanf("%d",&option);
+		scanf_s("%d",&option);
 		fflush(stdin);
 	
 		switch(option){
@@ -64,6 +68,13 @@ int main(){
 				printf("文件解密完成！\n");
 				break;
 			case 3 :
+				if(!resetPassword()){
+					printf("密码重置失败！\n");
+					break;
+				}
+				printf("密码重置成功！\n");
+				break;
+			case 4 :
 				return 0;
 				break;
 			default :
@@ -75,7 +86,7 @@ int main(){
 	}
 	
 
-	scanf("%s");
+	scanf_s("%s");
 	return 0;
 	
 }

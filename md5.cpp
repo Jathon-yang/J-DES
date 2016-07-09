@@ -172,9 +172,11 @@ void md5(char *encrypt,char *decrypt_str){
 	MD5_CTX md5 = {0};  
     MD5Init(&md5);                
     MD5Update(&md5,(unsigned char *)encrypt,strlen((char *)encrypt));  
-    MD5Final(&md5,decrypt); 
+    MD5Final(&md5,decrypt);
+
+	*decrypt_str = '\0';
     for(i=0;i<16;i++){  
-		sprintf(tmp,"%02x",decrypt[i]);
-		strcat(decrypt_str,tmp);
+		sprintf_s(tmp,"%02x",decrypt[i]);
+		strcat_s(decrypt_str,33,tmp);
     }
 }
